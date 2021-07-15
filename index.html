@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>W1-基本運作</title>
+ <!-- <script src="https://unpkg.com/vue@next"></script> 整包用法-->
+  <link rel="stylesheet" href="all.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+</head>
+<body>
+  <div id="app" class="bg-light">
+    <div class="container">
+      <div class="py-3">
+        <button
+          type="button"
+          class="btn btn-dark"
+          @click="pictureTypeIndex = ++pictureTypeIndex%3"
+        >
+          切換大頭貼解析度：<span>{{pictureType[pictureTypeIndex].name}}</span>
+        </button>
+      </div>
+      <div class="row">
+        <div class="col-md-4 mb-4" v-for="item in data">
+        <div class="card shadow">
+            <div v-if="item.gender === 'male'" class="card-body text-center bg-male">
+              <img :src="item.picture[pictureType[pictureTypeIndex].key]" class="card-img-top mb-2 shadow" alt="">
+              <h3 class="card-title">{{ item.name.title }} {{ item.name.first }} {{ item.name.last }}</h3>
+            </div>
+            <div v-else class="card-body text-center bg-female">
+              <img :src="item.picture[pictureType[pictureTypeIndex].key]" class="card-img-top mb-2 shadow" alt="">
+              <h4 class="card-title">{{ item.name.title }} {{ item.name.first }} {{ item.name.last }}</h4>
+            </div>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">
+          <i v-if="item.gender === 'male'" class="bi bi-gender-male"></i>
+          <i v-else class="bi bi-gender-female"></i>
+          Birth：{{ new Date(item.dob.date).toLocaleDateString()}} ({{item.dob.age}})</li>
+        <li class="list-group-item">
+          <i class="bi bi-envelope-fill"></i>
+          Email：<a :href="`mailto:${item.email}`" style="text-decoration:none">{{ item.email }}</a></li>
+        <li class="list-group-item">
+          <i class="bi bi-telephone-fill"></i>
+          Phone: <a :href="`tel:${item.phone}`" style="text-decoration:none">{{ item.phone }}</a></li>
+        <li class="list-group-item">
+          <i class="bi bi-geo-alt-fill"></i>
+          Address: {{item.location.postcode}} {{item.location.city}} {{item.location.country}}</li>
+          <li class="list-group-item">
+          <iframe width="100%" height="200" frameborder="0" scrolling="no"
+                  marginheight="0" marginwidth="0"
+                  :src=`https://maps.google.com.tw/maps?f=q&hl=zh-TW&geocode=&q=${item.location.coordinates.latitude},${item.location.coordinates.longitude}&z=10&output=embed`></iframe>
+          </li>
+      </ul>
+        </div>
+       
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!--使用Vue.js ESModule固定手法: script + tyoe="module"-->
+<!--單一模組使用時機: Vue Cli , composition API -->
+  <script type="module"> 
+    import { createApp } from 'https://cdnjs.cloudflare.com/ajax/libs/vue/3.1.4/vue.esm-browser.min.js';
+    createApp({
+      data(){ //function return
+        return{
+          data:[],
+          pictureTypeIndex:0,
+          pictureType:[
+        {key:'large', name:'清晰'},
+        {key:'medium', name:'中等'},
+        {key:'thumbnail', name:'模糊'}
+      ],
+        }
+      },
+      methods:{ //物件
+        
+      },
+      mounted(){ //初始化資料 mounted, created函式
+        //Ajax取得的資料放這
+        const api="https://randomuser.me/api/?results=20";
+        axios.get(api)
+        .then(res =>{
+          if(res.data.results){
+            this.data = res.data.results;
+            console.log(this.data);
+          } else {
+            alert(res.data.message);
+          }
+        }).catch((err) => {
+          console.log(err);
+        });
+      },
+    }).mount('#app');
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8" crossorigin="anonymous"></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/axios/0.9.1/axios.min.js'
+          integrity='sha512-Xk3wWei2TGrsh9kDSBKUMIjw/86sLUvhtnv9f7fOuIwhhiUTKz8szkWkzHthrM5Bb3Bu9idSzkxOrkzhcneuiw=='
+          crossorigin='anonymous'></script>
+</body>
+</html>

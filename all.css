@@ -1,0 +1,14 @@
+.card{
+  border: none!important;
+}
+.card-img-top{
+  height: 50%;
+  width: 50%!important;
+  border-radius: 50%!important;
+}
+.bg-male{
+  background-color:#a0bfec;
+}
+.bg-female{
+  background-color: #e9969f;
+}
