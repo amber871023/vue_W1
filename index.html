@@ -23,7 +23,7 @@
         </button>
       </div>
       <div class="row">
-        <div class="col-md-4 mb-4" v-for="item in data">
+        <div class="col-md-4 mb-4" v-for="item in data" :key="item.name">
         <div class="card shadow">
             <div v-if="item.gender === 'male'" class="card-body text-center bg-male">
               <img :src="item.picture[pictureType[pictureTypeIndex].key]" class="card-img-top mb-2 shadow" alt="">
@@ -79,22 +79,24 @@
         }
       },
       methods:{ //物件
-        
+        getData(){
+          const api="https://randomuser.me/api/?results=20";
+          axios.get(api)
+          .then(res =>{
+            if(res.data.results){
+              this.data = res.data.results;
+              console.log(this.data);
+            } else {
+              alert(res.data.message);
+            }
+          }).catch((err) => {
+            console.log(err);
+          });
+        }
       },
       mounted(){ //初始化資料 mounted, created函式
         //Ajax取得的資料放這
-        const api="https://randomuser.me/api/?results=20";
-        axios.get(api)
-        .then(res =>{
-          if(res.data.results){
-            this.data = res.data.results;
-            console.log(this.data);
-          } else {
-            alert(res.data.message);
-          }
-        }).catch((err) => {
-          console.log(err);
-        });
+       this.getData();
       },
     }).mount('#app');
     </script>
